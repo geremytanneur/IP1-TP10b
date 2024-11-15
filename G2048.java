@@ -80,14 +80,24 @@ public class G2048 {
 
     public static void initBoard() {
         board = new int[boardSize][boardSize];
-        board[1][0] = 2;
-        board[3][3] = 2;
+        for (int i = 0; i < 2; i++) {
+            int x = randInt(0, boardSize - 1);
+            int y = randInt(0, boardSize - 1);
+            while (board[y][x] != 0) {
+                x = randInt(0, boardSize - 1);
+                y = randInt(0, boardSize - 1);
+            }
+            board[y][x] = 2;
+        }
     }
 
     public static boolean isBoardWinning() {
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 if (board[i][j] == 2048) {
+                    StdDraw.clear();
+                    StdDraw.text(0.5, 0.5, "Bravo !");
+                    StdDraw.show();
                     return true;
                 }
             }
@@ -136,6 +146,13 @@ public class G2048 {
         return newRow;
     }
 
+    public static int[] slideLeft(int[] row) {
+        for (int i = 0; i < boardSize; i++) {
+            row = slideLeftAndMerge(row);
+        }
+        return row;
+    }
+
     // ...
 
     // Exercice 3 :
@@ -143,14 +160,14 @@ public class G2048 {
 
     public static void slideBoardLeft() {
         for (int i = 0; i < board.length; i++) {
-            board[i] = slideLeftAndMerge(board[i]);
+            board[i] = slideLeft(board[i]);
         }
     }
 
     public static void slideBoardRight() {
         for (int i = 0; i < board.length; i++) {
             reverse(board[i]);
-            board[i] = slideLeftAndMerge(board[i]);
+            board[i] = slideLeft(board[i]);
             reverse(board[i]);
         }
     }
@@ -183,25 +200,13 @@ public class G2048 {
     // Complétez addSquare
 
     public static void addSquare(int value) {
-        boolean lost = true;
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                if (board[i][j] == 0) {
-                    lost = false;
-                }
-            }
+        int x = randInt(0, boardSize - 1);
+        int y = randInt(0, boardSize - 1);
+        while (board[y][x] != 0) {
+            x = randInt(0, boardSize - 1);
+            y = randInt(0, boardSize - 1);
         }
-        if (lost) {
-            System.out.println("Perdu !");
-        } else {
-            int x = randInt(0, boardSize - 1);
-            int y = randInt(0, boardSize - 1);
-            while (board[y][x] != 0) {
-                x = randInt(0, boardSize - 1);
-                y = randInt(0, boardSize - 1);
-            }
-            board[y][x] = value;
-        }
+        board[y][x] = value;
     }
 
     // Exercice 5 :
@@ -217,25 +222,25 @@ public class G2048 {
         }
         if (direction == LEFT) {
             for (int i = 0; i < test.length; i++) {
-                test[i] = slideLeftAndMerge(test[i]);
+                test[i] = slideLeft(test[i]);
             }
         } else if (direction == RIGHT) {
             for (int i = 0; i < test.length; i++) {
                 reverse(test[i]);
-                test[i] = slideLeftAndMerge(test[i]);
+                test[i] = slideLeft(test[i]);
                 reverse(test[i]);
             }
         } else if (direction == UP) {
             transpose(test);
             for (int i = 0; i < test.length; i++) {
-                test[i] = slideLeftAndMerge(test[i]);
+                test[i] = slideLeft(test[i]);
             }
             transpose(test);
         } else if (direction == DOWN) {
             transpose(test);
             for (int i = 0; i < test.length; i++) {
                 reverse(test[i]);
-                test[i] = slideLeftAndMerge(test[i]);
+                test[i] = slideLeft(test[i]);
                 reverse(test[i]);
             }
             transpose(test);
@@ -309,6 +314,11 @@ public class G2048 {
                 direction = DOWN;
             } else if(StdDraw.isKeyPressed(KeyEvent.VK_UP)) {
                 direction = UP;
+            }
+            if(StdDraw.isKeyPressed(KeyEvent.VK_SPACE)) {
+                StdDraw.pause(16);
+                StdDraw.clearKeyPressed();
+                runGame();
             }
             StdDraw.pause(16);
         }
