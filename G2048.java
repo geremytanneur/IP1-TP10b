@@ -96,7 +96,7 @@ public class G2048 {
             for (int j = 0; j < boardSize; j++) {
                 if (board[i][j] == 2048) {
                     StdDraw.clear();
-                    StdDraw.text(0.5, 0.5, "Bravo !");
+                    StdDraw.text(0.5, 0.5, "2048 !");
                     StdDraw.show();
                     return true;
                 }
