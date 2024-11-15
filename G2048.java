@@ -276,7 +276,6 @@ public class G2048 {
     // move exécute un tour de jeu : si le coup est valide, alors on décale les
     // cases de la grille, et on en ajoute une nouvelle
     public static void move(int direction) {
-        board[0][0] = 2048;
         if (isValidMove(direction)) {
             slideBoard(direction);
             addSquare(newSquareValue());
