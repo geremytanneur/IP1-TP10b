@@ -75,6 +75,8 @@ public class G2048 {
     public static int UP = 2;
     public static int DOWN = 3;
 
+    public static boolean failed = false;
+
     // Exercice 1 :
     // Implémentez initBoard, isBoardWinning et newSquareValue ici.
 
@@ -95,9 +97,6 @@ public class G2048 {
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 if (board[i][j] == 2048) {
-                    StdDraw.clear();
-                    StdDraw.text(0.5, 0.5, "2048 !");
-                    StdDraw.show();
                     return true;
                 }
             }
@@ -276,6 +275,11 @@ public class G2048 {
     // move exécute un tour de jeu : si le coup est valide, alors on décale les
     // cases de la grille, et on en ajoute une nouvelle
     public static void move(int direction) {
+        boolean hasValidMove = false;
+        for (int i = 0; i < 4; i++) {
+            hasValidMove = hasValidMove || isValidMove(i);
+        }
+        failed = !hasValidMove;
         if (isValidMove(direction)) {
             slideBoard(direction);
             addSquare(newSquareValue());
@@ -314,8 +318,7 @@ public class G2048 {
                 direction = DOWN;
             } else if(StdDraw.isKeyPressed(KeyEvent.VK_UP)) {
                 direction = UP;
-            }
-            if(StdDraw.isKeyPressed(KeyEvent.VK_SPACE)) {
+            } else if(StdDraw.isKeyPressed(KeyEvent.VK_SPACE)) {
                 StdDraw.pause(16);
                 StdDraw.clearKeyPressed();
                 runGame();
@@ -339,10 +342,24 @@ public class G2048 {
         initBoard();
         drawBoard();
 
-        while(!isBoardWinning()) {
+        while(!isBoardWinning() && !failed) {
             int direction = getDirection();
             move(direction);
             drawBoard();
+        }
+        String message = failed ? "Perdu !" : "Gagné !";
+        StdDraw.clear();
+        StdDraw.text(0.5, 0.5, message);
+        StdDraw.show();
+        boolean ended = true;
+        while (ended) {
+            if(StdDraw.isKeyPressed(KeyEvent.VK_SPACE)) {
+                StdDraw.pause(16);
+                StdDraw.clearKeyPressed();
+                ended = false;
+                failed = false;
+                runGame();
+            }
         }
     }
 }
